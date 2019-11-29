@@ -12,6 +12,8 @@ typedef int       socket_t;
 #define NGX_PROCESS_JUST_RESPAWN  -4
 #define NGX_PROCESS_DETACHED      -5
 
+static unsigned char master_process[]="master process";
+
 typedef struct ngx_cycle_s {
     void                  ****conf_ctx;
 //     ngx_pool_t               *pool;

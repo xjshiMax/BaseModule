@@ -25,8 +25,8 @@ namespace libseabase
 	{
 #ifdef WIN32
 #else
-		struct flock f1;
-		f1._Bool_type=F_WRLCK;
+		struct flock fl;
+		fl.l_type=F_WRLCK;
 		fl.l_whence = SEEK_SET;
 
 		if (fcntl(fd, F_SETLK, &fl) == -1) {
@@ -41,7 +41,7 @@ namespace libseabase
 #else
 		struct flock  fl;
 
-		memset(&fl, sizeof(struct flock));
+		memset(&fl, 0,sizeof(struct flock));
 		fl.l_type = F_WRLCK;
 		fl.l_whence = SEEK_SET;
 
@@ -58,12 +58,12 @@ namespace libseabase
 #else
 		struct flock  fl;
 
-		memset(&fl, sizeof(struct flock));
+		memset(&fl,0, sizeof(struct flock));
 		fl.l_type = F_UNLCK;
 		fl.l_whence = SEEK_SET;
 
 		if (fcntl(fd, F_SETLK, &fl) == -1) {
-			return  ngx_errno;
+			return  errno;
 		}
 #endif
 		return SE_OK;

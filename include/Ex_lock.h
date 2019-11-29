@@ -13,7 +13,7 @@ namespace libseabase
 #ifdef WIN32
 #define Se_sched_yield()  Sleep(1)
 #else
-#define Se__sched_yield()  usleep(1)
+#define Se_sched_yield()  usleep(1)
 #endif
 	//зда§Ыј
 	class Se_spinlock
