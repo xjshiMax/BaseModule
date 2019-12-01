@@ -76,6 +76,7 @@
     <ClInclude Include="..\..\include\basevar.h" />
     <ClInclude Include="..\..\include\Daemon.h" />
     <ClInclude Include="..\..\include\Ex_lock.h" />
+    <ClInclude Include="..\..\include\Ex_module_epoll.h" />
     <ClInclude Include="..\..\include\Ex_process.h" />
     <ClInclude Include="..\..\include\Ex_socket.h" />
     <ClInclude Include="stdafx.h" />
@@ -84,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Daemon.cpp" />
     <ClCompile Include="..\..\src\Ex_lock.cpp" />
+    <ClCompile Include="..\..\src\Ex_module_epoll.cpp" />
     <ClCompile Include="..\..\src\Ex_process.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

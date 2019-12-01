@@ -2,8 +2,8 @@
 /*
 1)封装基于原子操作的自旋锁
 2)基于原子操作的读写锁
-3）封装进程锁（文件锁，自旋，信号量）
-	进程锁用来解决多进程惊群，多进程的负载均衡
+3）封装互斥锁（文件锁，自旋，信号量）
+	互斥用来解决多进程惊群，多进程的负载均衡
 4）基于套接字的文件锁（仅linux）
 */
 #pragma once
@@ -23,8 +23,8 @@ namespace libseabase
 		~Se_spinlock();
 	public:
 		void ES_spinlock(Es_atomic*lock,int set=1,int spin=2048);
-		inline void ES_trylock(Es_atomic*lock){  (*lock).get() == 0 && (*lock).cmp_set( 0, 1);}
-		inline void ES_unlock(Es_atomic*lock){ (*lock).set(0);}
+		inline int ES_trylock(Es_atomic*lock,int set=1){ return ( (*lock).get() == 0 && (*lock).cmp_set( 0, set));}
+		inline void ES_unlock(Es_atomic*lock,int set=1){ (*lock).set(0);}
 	};
 
 	//读写锁
@@ -66,11 +66,15 @@ namespace libseabase
 #endif
 		int       fd;
 		u_char        *name;
-		unsigned int     spin;
+		unsigned int     spin; //
 	} shmtx_t;
 
 
-	//进程锁
+	//互斥锁
+	/*
+	linux 记录锁，记录锁子进程不能继承，
+	windows 自旋锁，进程不sleep
+	*/
 	class Se_shmtx
 	{
 		unsigned int Se_shmtx_create(shmtx_t *mtx, shmtx_sh_t *addr,
