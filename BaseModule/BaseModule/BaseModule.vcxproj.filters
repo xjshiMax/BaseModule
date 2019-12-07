@@ -42,7 +42,13 @@
     <ClInclude Include="..\..\include\Ex_socket.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Ex_module_epoll.h">
+    <ClInclude Include="..\..\include\Ex_signal.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Ex_queue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rbtree.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,7 +65,7 @@
     <ClCompile Include="..\..\src\Ex_process.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Ex_module_epoll.cpp">
+    <ClCompile Include="..\..\src\Ex_queue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
