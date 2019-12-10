@@ -1,5 +1,7 @@
 #pragma once
 #include "basevar.h"
+#include "Ex_event_accept.h"
+#include "Ex_module_epoll.h"
 namespace libseabase{
 typedef int       pid_t;
 typedef int       socket_t;
@@ -43,6 +45,9 @@ typedef struct {
         static void worker_process_cycle(cycle_t *cycle, void *data);
         static void worker_process_init(cycle_t *cycle, int worker);
         static void worker_process_exit(cycle_t *cycle);
+
+
+        static void process_events_and_timers(cycle_t *cycle);
     private:
         Se_process(){}
         ~Se_process(){release();};
@@ -54,5 +59,9 @@ typedef struct {
         static int      ngx_process_slot;
         static int      ngx_last_process;
         static ngx_process_t  ngx_processes[NGX_MAX_PROCESSES];//进程列表
+
+        static Se_acceptMutex m_accept_mutex;
+        static Es_atomic*m_atomic;
+       // static Ex_epollmodule m_epollmodule;
     };
 }

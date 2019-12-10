@@ -7,10 +7,12 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stddef.h>
 #ifdef WIN32
 #include <Windows.h>
 #include <process.h>
@@ -21,6 +23,7 @@
 #include <unistd.h>
 #include<semaphore.h>
 #include <signal.h>
+#include <sys/mman.h>
 #endif
 
 
@@ -77,6 +80,12 @@ typedef struct ngx_cycle_s {
 	//     ngx_str_t                 hostname;
 }cycle_t;
 
+
+#ifndef O_BINARY
+
+#define O_BINARY 0 
+
+#endif
 namespace libseabase{
 
 using namespace std;

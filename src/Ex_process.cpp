@@ -1,12 +1,21 @@
 #include "../include/Ex_process.h"
 #include "Ex_socket.h"
+#include "Ex_shmem.h"
+#define test_ 
 namespace libseabase{
+
+#ifdef test_  //test
+    int *counter = NULL;
+#endif
     pid_t      Se_process::ngx_pid;
     pid_t      Se_process::ngx_parent;
     socket_t   Se_process::ngx_channel;
     int      Se_process::ngx_process_slot;
     int      Se_process::ngx_last_process = 0;
     ngx_process_t  Se_process::ngx_processes[NGX_MAX_PROCESSES];//进程列表
+    Se_acceptMutex Se_process::m_accept_mutex;
+    Es_atomic*Se_process::m_atomic = new Es_atomic;
+    //Se_process::m_atomic->set(0);
 //     ngx_signal_t  signals[] = {
 //         { ngx_signal_value(NGX_RECONFIGURE_SIGNAL),
 //         "SIG" ngx_value(NGX_RECONFIGURE_SIGNAL),
@@ -165,6 +174,20 @@ void test(int sig)
 }
     void Se_process::master_process_cycle(cycle_t *cycle)
     {
+#ifdef test_ //test
+        Se_shm_t shm;
+        shm.size = sizeof(int);
+        shm.name = "var";
+        Se_shmem::SE_shm_alloc(&shm);
+        counter = (int*)shm.addr;
+        *counter =0;
+        Se_shm_t shmspin;
+        shmspin.size = sizeof(Es_atomic);
+        shmspin.name = "varspin";
+        Se_shmem::SE_shm_alloc(&shmspin);
+        m_atomic = (Es_atomic*)shmspin.addr;
+        m_atomic->set(0);
+#endif
         sigset_t           set;
         sigaddset(&set,60);
       //signal(SIGALRM,test);
@@ -214,10 +237,18 @@ void test(int sig)
     }
     void Se_process::worker_process_cycle(cycle_t *cycle, void *data)
     {
-        sleep(1);
-        printf("in worker_process_cycle\n");
-        sigval  val;
-        sigqueue(getppid(),60,val);
+//         sleep(1);
+//         sigval  val;
+//         sigqueue(getppid(),60,val);
+//         pause();
+       m_accept_mutex.SE_trylock_accept_mutex(cycle);
+       printf("in worker_process_cycle:%d\n",getpid());
+       // Se_spinlock spinlock;
+       // spinlock.ES_spinlock(m_atomic,getpid());
+        for(int j=0;j<100;j++)
+        printf("%d\n",(*counter)++);
+        m_accept_mutex.SE_unlock_accept_mutex(cycle);
+      //  spinlock.ES_unlock(m_atomic,getpid());
         pause();
     }
     void Se_process::worker_process_init(cycle_t *cycle, int worker)
@@ -227,5 +258,27 @@ void test(int sig)
     void Se_process::worker_process_exit(cycle_t *cycle)
     {
 
+    }
+    void Se_process::process_events_and_timers(cycle_t *cycle)
+    {
+        if(m_accept_mutex.SE_trylock_accept_mutex(cycle) == SE_ERROR)
+        {
+            return;
+        }
+        if(m_accept_mutex.SE_getAcceptMutexHeld())
+        {
+
+        }
+  //      m_epollmodule.Se_process_events(cycle,1);
+        //SE_process_posted()
+        //accept 事件
+
+        if(m_accept_mutex.SE_getAcceptMutexHeld())
+        {
+            
+        }
+        m_accept_mutex.SE_unlock_accept_mutex(cycle);
+        //超时事件
+        //其他事件
     }
 };

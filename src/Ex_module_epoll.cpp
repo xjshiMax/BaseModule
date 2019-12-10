@@ -1,6 +1,7 @@
 #include "../include/Ex_module_epoll.h"
 namespace libseabase
 {
+#if 0
 	Ex_epollmodule::Ex_epollmodule()
 	{
 		ep=-1;
@@ -81,6 +82,33 @@ namespace libseabase
 	{
 		Se_event;
 		unsigned int events;
-		events
+        unsigned int revents;
+		int events ;
+        events = epoll_wait(ep,event_list,(int)nevents,timems);
+        int err = (events == -1) ? SE_ERROR : 0;
+        if(err)
+        {
+            return SE_ERROR;
+        }
+        
+        for(i=0;i<events;i++)
+        {
+            revents = event_list[i].events;
+             if (revents & (EPOLLERR|EPOLLHUP)) 
+                 {
+                      revents |= EPOLLIN|EPOLLOUT;
+                 }
+             if ((revents & EPOLLIN) && rev->active)
+             {
+
+             }
+              if ((revents & EPOLLOUT) && wev->active) 
+              {
+
+              }
+        }
+
+
 	}
+#endif
 };

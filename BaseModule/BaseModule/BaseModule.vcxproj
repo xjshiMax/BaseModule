@@ -75,10 +75,12 @@
     <ClInclude Include="..\..\include\atomic_x86.h" />
     <ClInclude Include="..\..\include\basevar.h" />
     <ClInclude Include="..\..\include\Daemon.h" />
+    <ClInclude Include="..\..\include\Ex_event_accept.h" />
     <ClInclude Include="..\..\include\Ex_lock.h" />
     <ClInclude Include="..\..\include\Ex_module_epoll.h" />
     <ClInclude Include="..\..\include\Ex_process.h" />
     <ClInclude Include="..\..\include\Ex_queue.h" />
+    <ClInclude Include="..\..\include\Ex_shmem.h" />
     <ClInclude Include="..\..\include\Ex_signal.h" />
     <ClInclude Include="..\..\include\Ex_socket.h" />
     <ClInclude Include="..\..\include\rbtree.h" />
@@ -87,10 +89,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Daemon.cpp" />
+    <ClCompile Include="..\..\src\Ex_event_accpet.cpp" />
     <ClCompile Include="..\..\src\Ex_lock.cpp" />
     <ClCompile Include="..\..\src\Ex_module_epoll.cpp" />
     <ClCompile Include="..\..\src\Ex_process.cpp" />
     <ClCompile Include="..\..\src\Ex_queue.cpp" />
+    <ClCompile Include="..\..\src\Ex_shmem.cpp" />
+    <ClCompile Include="..\..\src\rbtree.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

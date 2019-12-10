@@ -18,6 +18,7 @@ typedef struct _event
 }Se_event;
 namespace libseabase
 {
+#if 0
 	class Ex_epollmodule
 	{
 	public:
@@ -32,4 +33,5 @@ namespace libseabase
 		struct epoll_event *event_list;
 		unsigned int  nevents;
 	};
+#endif
 }

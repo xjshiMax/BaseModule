@@ -1,4 +1,6 @@
 #include "../include/Ex_lock.h"
+#include "../include/Ex_shmem.h"
+#include <fcntl.h>
 namespace libseabase
 {
 	void Se_spinlock::ES_spinlock(Es_atomic*lock,int set,int spin)
@@ -12,7 +14,7 @@ namespace libseabase
 			{
 				for(i=0;i < n;i++)
 				{
-					lock->cpu_pause();
+					lock->SE_cpu_pause();
 				}
 				if(lock->get()==0 && lock->cmp_set(0,set))
 					return;
@@ -59,12 +61,14 @@ namespace libseabase
 	}
 //-----------------------------------------------------------------------
 	static void static_shmtx_wakeup(shmtx_t *mtx){}
-	unsigned int Se_shmtx::Se_shmtx_create(shmtx_t *mtx, shmtx_sh_t *addr,
-		u_char *name)
+	unsigned int Se_shmtx::Se_shmtx_create(shmtx_t *mtx, void *addr,
+		unsigned char *name)
 	{
 #ifdef WIN32
-		mtx->lock = &addr->lock;
-		mtx->spin = 2048; //这里默认自旋时间
+ //使用共享内存保存lock,则可以进程之间共享锁，从而达到进程锁的作用
+        mtx->lock = (Es_atomic*)addr;
+        mtx->lock->set(0);
+        mtx->spin = 2048; //这里默认自旋时间
 #else
 		if (mtx->name) {
 
@@ -88,7 +92,7 @@ namespace libseabase
 	void Se_shmtx::Se_shmtx_destroy(shmtx_t *mtx)
 	{
 #ifdef WIN32
-
+        //Se_shmem::SE_shm_alloc(&shm);
 #else
 		if(mtx->fd)
 			close(mtx->fd);
@@ -96,7 +100,7 @@ namespace libseabase
 	}
 	unsigned int Se_shmtx::Se_shmtx_trylock(shmtx_t *mtx)
 	{
-#ifdef WIN32
+#ifndef WIN32
 		Se_spinlock spinlock;
 		int ret = spinlock.ES_trylock(mtx->lock,getpid());
 		if(ret!=0)
@@ -111,7 +115,7 @@ namespace libseabase
 	}
 	void Se_shmtx::Se_shmtx_lock(shmtx_t *mtx)
 	{
-#ifdef WIN32
+#ifndef WIN32
 		Se_spinlock spinlock;
 		spinlock.ES_spinlock(mtx->lock,getpid());
 #else
@@ -123,7 +127,7 @@ namespace libseabase
 	}
 	void Se_shmtx::Se_shmtx_unlock(shmtx_t *mtx)
 	{
-#ifdef WIN32
+#ifndef WIN32
 		Se_spinlock spinlock;
 		spinlock.ES_unlock(mtx->lock);
 #else
@@ -133,7 +137,7 @@ namespace libseabase
 	}
 	unsigned int Se_shmtx::Se_shmtx_force_unlock(shmtx_t *mtx, int pid)
 	{
-#ifdef WIN32
+#ifndef WIN32
 		Se_spinlock spinlock;
 		spinlock.ES_unlock(mtx->lock);
 #endif

@@ -19,8 +19,8 @@ namespace libseabase
 	class Se_spinlock
 	{
 	public:
-		Se_spinlock();
-		~Se_spinlock();
+        Se_spinlock(){};
+        ~Se_spinlock(){};
 	public:
 		void ES_spinlock(Es_atomic*lock,int set=1,int spin=2048);
 		inline int ES_trylock(Es_atomic*lock,int set=1){ return ( (*lock).get() == 0 && (*lock).cmp_set( 0, set));}
@@ -56,7 +56,7 @@ namespace libseabase
 	} shmtx_sh_t;
 
 
-	typedef struct {
+	typedef struct shmtx_tt{
 
 		Es_atomic  *lock;
 #ifndef WIN32
@@ -67,18 +67,23 @@ namespace libseabase
 		int       fd;
 		u_char        *name;
 		unsigned int     spin; //
+//         struct shmtx_tt()
+//         {
+//             lock.set(0);
+//         }
 	} shmtx_t;
 
 
 	//互斥锁
 	/*
 	linux 记录锁，记录锁子进程不能继承，
-	windows 自旋锁，进程不sleep
+	windows 自旋锁，进程不sleep，锁资源放在共享内存里面，因而可以使用在进程之间锁
 	*/
 	class Se_shmtx
 	{
-		unsigned int Se_shmtx_create(shmtx_t *mtx, shmtx_sh_t *addr,
-			u_char *name);
+    public:
+		unsigned int Se_shmtx_create(shmtx_t *mtx, void *addr,
+			unsigned char *name=(unsigned char*)"shm_lock");
 		void Se_shmtx_destroy(shmtx_t *mtx);
 		unsigned int Se_shmtx_trylock(shmtx_t *mtx);
 		void Se_shmtx_lock(shmtx_t *mtx);

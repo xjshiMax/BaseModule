@@ -11,7 +11,8 @@
 特性5：从任一节点到其每个叶子节点的所有简单路径都包含相同数目的黑色节点
 */
 #pragma once
-typedef Se_rbtree_node_s Se_rbtree_node_t;
+#include <stddef.h>
+typedef struct Se_rbtree_node_s Se_rbtree_node_t;
 
 struct Se_rbtree_node_s{
     unsigned int        key;        //关键字
@@ -23,8 +24,8 @@ struct Se_rbtree_node_s{
 };
 
 typedef struct Se_rbtree_s Se_rbtree_t;
-typedef void (*SE_rbtree_insert_pt) (Se_rbtree_t*root,
-    Se_rbtree_node_t,Se_rbtree_node_t*sentinel);
+typedef void (*SE_rbtree_insert_pt) (Se_rbtree_node_t*root,
+    Se_rbtree_node_t*node,Se_rbtree_node_t*sentinel);
 
 struct Se_rbtree_s{
     Se_rbtree_node_t    *root;      //指向根节点，根节点也是数据元素

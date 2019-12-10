@@ -1,18 +1,17 @@
 #include "../include/rbtree.h"
-
 static inline void SE_rbtree_left_rotate(Se_rbtree_node_t **root,
     Se_rbtree_node_t *sentinel, Se_rbtree_node_t *node);
-static inline void ngx_rbtree_right_rotate(Se_rbtree_node_t **root,
+static inline void SE_rbtree_right_rotate(Se_rbtree_node_t **root,
     Se_rbtree_node_t *sentinel, Se_rbtree_node_t *node);
 
 void SE_rbtree_insert(Se_rbtree_t *tree, Se_rbtree_node_t *node)
 {
-    Se_rbtree_t **root,*temp,*sentinel;
+    Se_rbtree_node_t **root,*temp,*sentinel;
     root = &tree->root;
     sentinel = tree->sentinel;
     if(*root == sentinel)
     {
-        node->parent =NULL;
+        node->parent = NULL;
         node->left = sentinel;
         node->right = sentinel;
         SE_rbt_black(node);
@@ -246,17 +245,17 @@ void SE_rbtree_insert_value(Se_rbtree_node_t *root,Se_rbtree_node_t *node,
 
     for ( ;; ) {
 
-        p = (node->key < temp->key) ? &temp->left : &temp->right;
+        p = (node->key < root->key) ? &root->left : &root->right;
 
         if (*p == sentinel) {
             break;
         }
 
-        temp = *p;
+        root = *p;
     }
 
     *p = node;
-    node->parent = temp;
+    node->parent = root;
     node->left = sentinel;
     node->right = sentinel;
     SE_rbt_red(node);
@@ -283,18 +282,18 @@ void SE_rbtree_insert_timer_value(Se_rbtree_node_t *root,Se_rbtree_node_t *node,
 
         /*  node->key < temp->key */
 
-        p = ((unsigned int) (node->key - temp->key) < 0)
-            ? &temp->left : &temp->right;
+        p = ((unsigned int) (node->key - root->key) < 0)
+            ? &root->left : &root->right;
 
         if (*p == sentinel) {
             break;
         }
 
-        temp = *p;
+        root = *p;
     }
 
     *p = node;
-    node->parent = temp;
+    node->parent = root;
     node->left = sentinel;
     node->right = sentinel;
     SE_rbt_red(node);
@@ -344,7 +343,7 @@ static inline void SE_rbtree_right_rotate(Se_rbtree_node_t **root,
     temp->right = node;
     node->parent = temp;
 }
-static inline void ngx_rbtree_left_rotate(Se_rbtree_node_t **root,
+static inline void SE_rbtree_left_rotate(Se_rbtree_node_t **root,
     Se_rbtree_node_t *sentinel, Se_rbtree_node_t *node)
 {
     Se_rbtree_node_t *temp;

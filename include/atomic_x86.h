@@ -2,6 +2,8 @@
 //linux和windows均可使用版本，测试通过
 //by xjshi 2019/11/20
 #pragma once
+#ifndef _atomic_x86_h
+#define _atomic_x86_h
 #include "basevar.h"
 namespace libseabase
 {
@@ -18,8 +20,8 @@ namespace libseabase
         unsigned int dec();
         unsigned int cmp_set(unsigned int old,unsigned int set);  //与old比较，相同则设置m_val为set的值，否则什么也不做。
         unsigned int fetch_add();
-		void memory_barrier();
-		void cpu_pause();
+        void SE_memory_barrier();
+        void SE_cpu_pause();
     private:
 #ifdef WIN32
         long m_val;
@@ -116,18 +118,20 @@ namespace libseabase
     {
         return 0;
     }
-	void Es_atomic::memory_barrier() {  
+	void inline Es_atomic::SE_memory_barrier() {  
 #ifdef WIN32
 #else
 		__asm__ volatile ("" ::: "memory");
 #endif
 	}
-
-	/* old "as" does not support "pause" opcode */
-    void Es_atomic::cpu_pause(){
+//
+//	/* old "as" does not support "pause" opcode */
+    void inline Es_atomic::SE_cpu_pause(){
 #ifdef WIN32
 #else
-		__asm__ (".byte 0xf3, 0x90");
+        __asm__ (".byte 0xf3, 0x90");
 #endif
-	}
+    }
 }
+
+#endif
